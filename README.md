@@ -2,7 +2,7 @@
 
 A modern, responsive weather dashboard that provides real-time atmospheric data for cities around the world. Designed with a focus on simplicity and clean data visualization.
 
-**Demo:** [https://m-cuaca.netlify.app](https://m-cuaca.netlify.app) *(Adjust if the URL is different)*
+**Demo:** [https://m-cuaca.netlify.app](https://m-cuaca.netlify.app)
 
 ## 🚀 Features
 
