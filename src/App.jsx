@@ -7,7 +7,7 @@ import Forecast from "./components/Forecast";
 import "./App.css";
 
 function App() {
-  const { data, forecast, loading, error, searchByCity, getByLocation } = useWeather("Surakarta");
+  const { data, forecast, loading, error, searchByCity, getByLocation } = useWeather("");
   
   const getBackground = () => {
     if (!data) return "from-blue-200 to-cyan-200";

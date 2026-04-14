@@ -47,19 +47,15 @@ export const useWeather = (defaultCity = "Surakarta") => {
     }
   }, []);
 
-  useEffect(() => {
-    fetchWeather(defaultCity);
-  }, [fetchWeather, defaultCity]);
-
   const searchByCity = (city) => {
     if (city.trim()) {
       fetchWeather(city);
     }
   };
-
-  const getByLocation = () => {
+  const getByLocation = useCallback(() => {
     if (!navigator.geolocation) {
       setError("Geolocation is not supported by your browser.");
+      setLoading(false);
       return;
     }
 
@@ -72,11 +68,19 @@ export const useWeather = (defaultCity = "Surakarta") => {
         );
       },
       (geoErr) => {
-        setLoading(false);
-        setError("Location access denied or unavailable: " + geoErr.message);
+        // Jika akses lokasi ditolak, berikan fallback default (misal Jakarta)
+        fetchWeather("Jakarta");
       }
     );
-  };
+  }, [fetchWeather]);
+
+  useEffect(() => {
+    if (defaultCity) {
+      fetchWeather(defaultCity);
+    } else {
+      getByLocation();
+    }
+  }, [fetchWeather, defaultCity, getByLocation]);
 
   return { data, forecast, loading, error, searchByCity, getByLocation };
 };
