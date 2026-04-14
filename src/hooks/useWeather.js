@@ -40,7 +40,9 @@ export const useWeather = (defaultCity = "") => {
       // Approximating 1 per day by jumping 8 elements.
       const dailyForecast = forecastRes.data.list.filter((item, index) => index % 8 === 0).slice(0, 5);
       
-      setForecast({ city: forecastRes.data.city, list: dailyForecast });
+      const hourlyForecast = forecastRes.data.list.slice(0, 8); // 8 interval = 24 hours
+      
+      setForecast({ city: forecastRes.data.city, list: dailyForecast, hourly: hourlyForecast });
     } catch (err) {
       setError(
         err.response?.data?.message || err.message || "City not found or unable to fetch data"
