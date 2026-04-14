@@ -4,7 +4,7 @@ import axios from "axios";
 const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
 const BASE_URL = "https://api.openweathermap.org/data/2.5";
 
-export const useWeather = (defaultCity = "Surakarta") => {
+export const useWeather = (defaultCity = "") => {
   const [data, setData] = useState(null);
   const [forecast, setForecast] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -31,6 +31,11 @@ export const useWeather = (defaultCity = "Surakarta") => {
 
       setData(weatherRes.data);
       
+      // Simpan kota terakhir yang berhasil diambil ke dalam cache
+      if (!isCoords && weatherRes.data.name) {
+        localStorage.setItem("last_weather_city", weatherRes.data.name);
+      }
+      
       // Filter list data to show 5 items for the next day, since forecast gives 3 hour intervals (8 elements per day).
       // Approximating 1 per day by jumping 8 elements.
       const dailyForecast = forecastRes.data.list.filter((item, index) => index % 8 === 0).slice(0, 5);
@@ -52,6 +57,7 @@ export const useWeather = (defaultCity = "Surakarta") => {
       fetchWeather(city);
     }
   };
+
   const getByLocation = useCallback(() => {
     if (!navigator.geolocation) {
       setError("Geolocation is not supported by your browser.");
@@ -68,15 +74,20 @@ export const useWeather = (defaultCity = "Surakarta") => {
         );
       },
       (geoErr) => {
-        // Jika akses lokasi ditolak, berikan fallback default (misal Jakarta)
-        fetchWeather("Jakarta");
-      }
+        // Jika akses lokasi ditolak/gagal, berikan fallback default kota tempat pengguna berada mis. Surakarta
+        fetchWeather("Surakarta");
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
   }, [fetchWeather]);
 
   useEffect(() => {
+    const savedCity = localStorage.getItem("last_weather_city");
     if (defaultCity) {
       fetchWeather(defaultCity);
+    } else if (savedCity) {
+      // Prioritaskan kota terakhir yang dilihat daripada lokasi yang kurang akurat
+      fetchWeather(savedCity);
     } else {
       getByLocation();
     }
