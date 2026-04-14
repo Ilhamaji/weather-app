@@ -1,0 +1,10 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Memberi tahu Netlify bahwa ini adalah SPA (Single Page Application)
+# Jika user merefresh halaman apapun, jangan beri 404, tapi redirect ke index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

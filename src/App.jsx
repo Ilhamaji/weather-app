@@ -1,116 +1,59 @@
+import React from "react";
+import { useWeather } from "./hooks/useWeather";
+import SearchBar from "./components/SearchBar";
+import CurrentWeather from "./components/CurrentWeather";
+import WeatherDetails from "./components/WeatherDetails";
+import Forecast from "./components/Forecast";
 import "./App.css";
-import axios from "axios";
-import { useEffect } from "react";
-import { useState } from "react";
 
 function App() {
-  const key = "7a1618a9d1115240826c4d17de6465c8"; //7a1618a9d1115240826c4d17de6465c8
+  const { data, forecast, loading, error, searchByCity, getByLocation } = useWeather("Surakarta");
+  
+  const getBackground = () => {
+    if (!data) return "from-blue-200 to-cyan-200";
+    const main = data.weather[0].main.toLowerCase();
+    const hour = new Date().getHours();
+    const isNight = hour >= 18 || hour <= 5;
 
-  const [city, setCity] = useState("");
-  const [citys, setCitys] = useState("Surakarta");
-  const [cityss, setCityss] = useState("");
-  const [main, setMain] = useState([]);
-  const [weather, setWeather] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [time, setTime] = useState();
-  const [ampm, setAmpm] = useState();
-  const [hour, setHour] = useState();
-  const date = new Date();
-
-  useEffect(() => {
-    const res = async () => {
-      await axios
-        .get(
-          `https://api.openweathermap.org/data/2.5/weather?q=${citys}&appid=${key}&units=metric`
-        )
-        .then((response) => {
-          setCity(response.data.name);
-          setMain(response.data.main);
-          setWeather(response.data.weather[0]);
-          setLoading(false);
-        })
-        .catch((e) => e.message);
-    };
-    res();
-  }, [citys]);
-
-  useEffect(() => {
-    const dateTimeformat = () => {
-      let hours = date.getHours();
-      let minutes = date.getMinutes();
-      let x = hours >= 12 ? "pm" : "am";
-      hours = hours % 12;
-      hours = hours ? hours : 12;
-      minutes = minutes.toString().padStart(2, "0");
-      let mergeTime = hours + ":" + minutes + " " + x;
-      setAmpm(x);
-      setHour(hours);
-      setTime(mergeTime);
-    };
-    dateTimeformat();
-  }, [60000]);
-
-  function handlerclick(e) {
-    setLoading(true);
-    e.preventDefault();
-    setCitys(cityss);
-    setLoading(false);
-  }
+    if (isNight) return "from-slate-900 via-purple-900 to-indigo-900";
+    if (main.includes("clear")) return "from-blue-400 to-blue-200";
+    if (main.includes("cloud")) return "from-slate-400 to-slate-200";
+    if (main.includes("rain") || main.includes("drizzle")) return "from-slate-700 to-slate-500";
+    if (main.includes("snow")) return "from-blue-100 to-white";
+    return "from-blue-300 to-cyan-100";
+  };
 
   return (
-    <div
-      className={`App ${
-        ampm == "am" && hour >= 6
-          ? "bg-sky-100"
-          : ampm == "pm" && hour <= 6
-          ? "bg-sky-100"
-          : "bg-neutral-500"
-      }`}
-    >
-      {loading ? (
-        <div className="text-center align-middle my-auto self-auto">
-          Loading...
-        </div>
-      ) : (
-        <div className="flex w-full h-full">
-          <div className="mx-auto my-auto bg-white rounded-lg p-5 shadow-md">
-            <center>
-              <div className="search">
-                <input
-                  placeholder="City"
-                  type="text"
-                  className="bg-white py-1 px-1 border-2 border-slate-200 rounded-md"
-                  onChange={(e) => setCityss(e.target.value)}
-                />
-                <button
-                  type="button"
-                  className="bg-neutral-100 py-2 px-4 ml-2 rounded-md"
-                  onClick={(e) => handlerclick(e)}
-                >
-                  Search
-                </button>
-              </div>
-            </center>
-            <div className="justify-between flex">
-              <img
-                src={`http://openweathermap.org/img/w/${weather.icon}.png`}
-                className="w-20"
-              />
-              <div className="temp-sub font-black text-3xl my-auto">
-                {Math.round(main.temp).toFixed(0)}&deg;C
-              </div>
-            </div>
-            <div className="font-black">{city}</div>
-            <div className="weather-head">{weather.main}</div>
-            <div className="weather-sub">{weather.description}</div>
-            <div className="flex hum">
-              <div className="hum-head">Humidity :</div>
-              <div className="hum-sub ml-1">{main.humidity}</div>
-            </div>
-            {time}
+    <div className={`min-h-screen w-full bg-gradient-to-br ${getBackground()} transition-colors duration-1000 p-4 sm:p-8 flex items-center justify-center font-sans relative overflow-hidden`}>
+      <div className="w-full max-w-4xl mx-auto shadow-2xl rounded-[40px] overflow-hidden bg-white/10 backdrop-blur-lg border p-6 sm:p-10 z-10 box-border border-white/20">
+        <SearchBar onSearch={searchByCity} onLocation={getByLocation} />
+        
+        {loading && (
+          <div className="flex justify-center items-center h-[50vh]">
+            <div className="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-white drop-shadow-md"></div>
           </div>
-        </div>
-      )}
+        )}
+
+        {!loading && error && (
+          <div className="mt-8 bg-red-100/90 backdrop-blur-md border border-red-400 text-red-700 px-6 py-4 rounded-2xl shadow-lg relative flex items-center animate-fade-in-up">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-8 h-8 mr-3">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <div>
+              <strong className="font-bold block text-lg">Error Occurred</strong>
+              <span className="block sm:inline">{error}</span>
+            </div>
+          </div>
+        )}
+
+        {!loading && !error && data && (
+          <div className="animate-fade-in-up">
+            <CurrentWeather data={data} />
+            <WeatherDetails data={data} />
+            <Forecast forecast={forecast} />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
