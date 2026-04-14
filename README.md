@@ -1,4 +1,4 @@
-# <img src="public/weather_favicon.png" alt="Logo" width="42" height="42" align="top" /> Weather App | Live Forecast
+# <img src="public/weather_favicon.png" alt="Logo" width="42" height="42" align="top" /> Weather App
 
 A modern, responsive weather dashboard that provides real-time atmospheric data for cities around the world. Designed with a focus on simplicity and clean data visualization.
 
