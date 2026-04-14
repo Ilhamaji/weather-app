@@ -1,6 +1,9 @@
 import React from 'react';
+import { useHorizontalScroll } from '../hooks/useHorizontalScroll';
 
 const Forecast = ({ forecast }) => {
+  const scrollRef = useHorizontalScroll();
+
   if (!forecast || !forecast.list) return null;
 
   return (
@@ -11,7 +14,7 @@ const Forecast = ({ forecast }) => {
         </svg>
         5-Day Forecast
       </h3>
-      <div className="flex flex-row overflow-x-auto space-x-4 pb-4 scrollbar-hide snap-x">
+      <div ref={scrollRef} className="flex flex-row overflow-x-auto space-x-4 pb-4 scrollbar-hide snap-x">
         {forecast.list.map((item, index) => {
           const date = new Date(item.dt * 1000);
           const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });

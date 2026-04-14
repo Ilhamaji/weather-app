@@ -1,6 +1,9 @@
 import React from 'react';
+import { useHorizontalScroll } from '../hooks/useHorizontalScroll';
 
 const HourlyForecast = ({ forecast }) => {
+  const scrollRef = useHorizontalScroll();
+
   if (!forecast || !forecast.hourly) return null;
 
   return (
@@ -11,7 +14,7 @@ const HourlyForecast = ({ forecast }) => {
         </svg>
         Today's Hourly Forecast
       </h3>
-      <div className="flex flex-row overflow-x-auto space-x-4 pb-4 scrollbar-hide snap-x">
+      <div ref={scrollRef} className="flex flex-row overflow-x-auto space-x-4 pb-4 scrollbar-hide snap-x">
         {forecast.hourly.map((item, index) => {
           const date = new Date(item.dt * 1000);
           const timeStr = date.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true });
