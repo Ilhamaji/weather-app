@@ -1,4 +1,4 @@
-# <img src="public/favicon.ico" alt="Logo" width="36" height="36" align="top" /> Weather App
+# <img src="public/weather_favicon.png" alt="Logo" width="42" height="42" align="top" /> Weather App | Live Forecast
 
 A modern, responsive weather dashboard that provides real-time atmospheric data for cities around the world. Designed with a focus on simplicity and clean data visualization.
 
@@ -37,7 +37,7 @@ A modern, responsive weather dashboard that provides real-time atmospheric data 
     Create a `.env` file in the root directory and add your OpenWeather API key:
 
     ```env
-    VITE_WEATHER_API_KEY=your_api_key_here
+    VITE_OPENWEATHER_API_KEY=your_api_key_here
     ```
 
 ## 📋 Usage
