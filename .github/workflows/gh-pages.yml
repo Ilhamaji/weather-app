@@ -35,10 +35,10 @@ jobs:
         run: npm ci
 
       - name: Build Vite App
-        # Menyertakan env rahasia dan mengatur base path ke nama repository secara otomatis
+        # Menyertakan env rahasia
         env:
           VITE_OPENWEATHER_API_KEY: ${{ secrets.VITE_OPENWEATHER_API_KEY }}
-        run: npm run build -- --base=/${{ github.event.repository.name }}/
+        run: npm run build
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
